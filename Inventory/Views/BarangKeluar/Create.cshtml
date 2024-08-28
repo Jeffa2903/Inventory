@@ -1,0 +1,198 @@
+﻿@model Inventory.Models.barangKeluar
+
+@{
+    ViewBag.Title = "Create";
+    var stokData = ViewBag.Stok as List<dynamic>;
+}
+
+<div class="row">
+    <div class="col-6">
+        <div class="form-horizontal">
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label>Tanggal Keluar</label>
+                <div class="col-md-10">
+                    <input type="date" class="form-control" id="tanggalKeluar" />
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label>Barang</label>
+                <div class="col-md-10">
+                    <select class="form-control" aria-label="Default select example" id="idBarang">
+                        <option selected>Pilih Salah Satu</option>
+                        @foreach (var item in ViewBag.barang)
+                        {
+                            <option value="@item.id" data-namabarang="@item.namaBarang">@item.namaBarang</option>
+                        }
+
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label>Jumlah Barang</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.jumlahBarang, new { htmlAttributes = new { @class = "form-control", @id = "jumlahBarang" } })
+                    @Html.ValidationMessageFor(model => model.jumlahBarang, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <hr />
+        <div class="form-horizontal">
+            @*<div class="form-group">
+                    <label>Harga Barang</label>
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.hargaBarang, new { htmlAttributes = new { @class = "form-control", @id = "hargaBarang" } })
+                        @Html.ValidationMessageFor(model => model.hargaBarang, "", new { @class = "text-danger" })
+                    </div>
+                </div>*@
+
+            <div class="form-group">
+                <label>Supplier</label>
+                <div class="col-md-10">
+                    <select class="form-control" aria-label="Default select example" id="idSupllierBarang">
+                        <option selected>Pilih Salah Satu</option>
+                        @foreach (var item in ViewBag.supplier)
+                        {
+                            <option value="@item.id" data-namaSupplier="@item.namaCustomer">@item.namaCustomer</option>
+                        }
+
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-10">
+        <button type="button" class="btn btn-primary" id="addRow">Tambah Data</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table" id="itemsTable">
+            <thead>
+                <tr>
+                    <th>Tanggal Keluar</th>
+                    <th>Nama Barang</th>
+                    <th>Jumlah</th>
+                    <th>Supplier</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-success btn-sm" id="saveData">Simpan Data</button>
+    </div>
+</div>
+
+
+<script>
+$(document).ready(function(){
+
+
+    var stokBarang = {};
+
+    @if (ViewBag.Stok != null)
+{
+    foreach (var item in ViewBag.Stok)
+    {
+        <text>
+            stokBarang[@item.idBarang] = @item.stock;
+        </text>;
+    }
+}
+
+    console.log(stokBarang);
+
+    $("#addRow").click(function(){
+        var tanggalKeluar = $("#tanggalKeluar").val();
+        var idBarang = $("#idBarang").val();
+        var jumlahBarang = $("#jumlahBarang").val();
+        var idSupllierBarang = $("#idSupllierBarang").val();
+        var namaSupplier = $("#idSupllierBarang option:selected").data('namasupplier');
+        var namaBarang = $("#idBarang option:selected").data('namabarang');
+
+        if (!tanggalKeluar || !idBarang || !jumlahBarang || !idSupllierBarang) {
+            alert("Semua kolom harus diisi!");
+            return;
+        }
+        var stokTersedia = stokBarang[idBarang] || 0;
+        console.log(stokTersedia)
+        console.log(idBarang)
+
+        if (parseInt(jumlahBarang) > stokTersedia) {
+            alert("Jumlah barang melebihi stok tersedia!");
+            return;
+        }
+
+
+
+        var newRow = $("<tr>");
+        var cols = "";
+
+        cols += '<td>' + tanggalKeluar + '</td>';
+        cols += '<td>' + namaBarang + '</td>';
+        cols += '<td>' + jumlahBarang + '</td>';
+        cols += '<td>' + namaSupplier + '</td>';
+        cols += '<td><button type="button" class="btn btn-danger btn-sm deleteRow">Hapus</button></td>';
+        cols += '<input type="hidden" name="idSupllierBarang[]" value="' + idSupllierBarang + '">';
+        cols += '<input type="hidden" name="idBarang[]" value="' + idBarang + '">';
+
+        newRow.append(cols);
+        $("#itemsTable tbody").append(newRow);
+
+        // Optionally clear the form fields after adding the row
+        $("#tanggalKeluar").val('');
+        $("#idBarang").val('');
+        $("#jumlahBarang").val('');
+        $("#idSupllierBarang").val('');
+        if (stokBarang[idBarang]) {
+            stokBarang[idBarang] = stokBarang[idBarang] - jumlahBarang;
+        }
+    });
+
+    $("#itemsTable").on("click", ".deleteRow", function(event){
+        $(this).closest("tr").remove();
+    });
+
+    $("#saveData").click(function(){
+        var tableData = [];
+        $("#itemsTable tbody tr").each(function(){
+            var row = $(this);
+            var rowData = {
+                tanggalKeluar: row.find("td:eq(0)").text(),
+                idBarang: row.find("input[name='idBarang[]']").val(),
+                jumlahBarang: row.find("td:eq(2)").text(),
+                idSupllierBarang: row.find("input[name='idSupllierBarang[]']").val()
+            };
+            tableData.push(rowData);
+        });
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("CreateSave", "BarangKeluar")',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({ tableData: tableData }),
+            success: function(response){
+                alert("Data berhasil disimpan!");
+                // Optionally, clear the table after saving
+                $("#itemsTable tbody").empty();
+            },
+            error: function(error){
+                alert("Terjadi kesalahan: " + error.responseText);
+            }
+        });
+    });
+});
+</script>
+

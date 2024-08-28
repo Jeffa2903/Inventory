@@ -1,0 +1,46 @@
+﻿
+@{
+    ViewBag.Title = "downloadModal";
+}
+
+
+<div class="modal fade" id="downloadReportModal" tabindex="-1" role="dialog" aria-labelledby="downloadReportModalModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="downloadReportModalModalLabel">Download Report</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("GenerateReport", "Home", FormMethod.Post, new { @class = "form-horizontal", id = "editBarangMasukForm" }))
+                {
+                    <div class="form-group">
+                        <label>Tanggal Awal</label>
+                        <input type="date" class="form-control" id="tanggalAwal" name="startDate" />
+                    </div>
+                    <div class="form-group">
+                        <labe>Tanggal Akhir</labe>
+                        <input type="date" class="form-control" id="tanggalAkhir" name="endDate"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Barang</label>
+                        <select class="form-control" aria-label="Default select example" id="tipeLaporan" name="reportType">
+                            <option value="" selected>--Pilih Laporan--</option>
+                            <option value="barangMasuk" selected>Laporan Barang Masuk</option>
+                            <option value="barangKeluar" selected>Laporan Barang Keluar</option>
+                            
+
+                        </select>
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

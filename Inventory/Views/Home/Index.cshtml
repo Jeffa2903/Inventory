@@ -1,0 +1,159 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@model IEnumerable<Inventory.Models.BarangStock>
+
+<div id="modalContainer"></div>
+<div class="row">
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-desktop"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Master Barang</span>
+                <span class="info-box-number">
+                    @ViewBag.Barang
+                    <small>Data</small>
+                </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-users"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Supplier</span>
+                <span class="info-box-number">@ViewBag.Supplier <small>Supplier</small></span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <!-- fix for small devices only -->
+    <div class="clearfix hidden-md-up"></div>
+
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-shopping-cart"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Order Barang Masuk</span>
+                <span class="info-box-number">@ViewBag.BarangMasuk <small>Order</small></span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-shopping-cart"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Order Barang Keluar</span>
+                <span class="info-box-number">@ViewBag.BarangKeluar <small>Order</small></span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+</div>
+
+<table id="tableBarangMasuk" class="table table-bordered table-hover dataTable dtr-inline collapsed">
+    <thead>
+        <tr>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="NAMA BARANG: activate to sort column ascending" aria-sort="descending">NAMA BARANG</th>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="TANGGAL KELUAR: activate to sort column ascending" aria-sort="descending">JUMLAH MASUK</th>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="JUMLAH BARANG: activate to sort column ascending" aria-sort="descending">JUMLAH KELUAR</th>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="HARGA BARANG: activate to sort column ascending" aria-sort="descending">STOK</th>
+
+
+        </tr>
+    </thead>
+    @foreach (var item in ViewBag.stok)
+    {
+        <tr>
+            <td>
+                @item.nameBarang
+            </td>
+            <td>
+                @item.jumlahMasuk
+            </td>
+            <td>
+                @item.jumlahKeluar
+            </td>
+            <td>
+                @item.stock
+            </td>
+
+        </tr>
+    }
+
+</table>
+<div class="d-flex justify-content-end">
+    <a href="javascript:void(0);" title="Create" class="btn btn-success btn-lg" data-toggle="modal" data-target="#createBarangModal" id="downloadReport">
+        Download Report <i class="fa fa-download"></i>
+    </a>
+</div>
+<!--<div class="col-12">
+    <div class="card">
+        <div class="card-header border-0">
+            <div class="d-flex justify-content-between">
+                <h3 class="card-title">Grafik Order Barang Masuk dan Keluar</h3>
+
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="d-flex">
+                <p class="d-flex flex-column">
+                    <span class="text-bold text-lg">820</span>
+                    <span>Order Barang</span>
+                </p>
+                <p class="ml-auto d-flex flex-column text-right">
+                    <span class="text-success">
+
+                    </span>
+                    <span class="text-muted">Since last week</span>
+                </p>
+            </div>-->
+<!-- /.d-flex -->
+<!--<div class="position-relative mb-4">
+                <canvas id="visitors-chart" height="200"></canvas>
+            </div>
+
+            <div class="d-flex flex-row justify-content-end">
+                <span class="mr-2">
+                    <i class="fas fa-square text-primary"></i> Barang Masuk
+                </span>
+
+                <span>
+                    <i class="fas fa-square text-gray"></i> Barang Keluar
+                </span>
+            </div>
+        </div>
+    </div>
+</div>-->
+<script>
+    $(document).ready(function () {
+        $('#downloadReport').click(function () {
+            $.ajax({
+                url: '@Url.Action("downloadModal", "Home")',
+                type: 'GET',
+                success: function (data) {
+                $('#modalContainer').html(data);
+                $('#downloadReportModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                console.error('AJAX Error: ' + status + ' ' + error);
+                }
+                });
+                });
+                });
+                </script>

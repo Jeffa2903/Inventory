@@ -1,0 +1,116 @@
+﻿@model IEnumerable<Inventory.Models.BarangMasukView>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<p>
+    <a href="@Url.Action("Create", "BarangKeluar")" title="Create" class="btn btn-success btn-lg" id="createBarangMasukButton">
+        Tambah Data <i class="fa fa-plus"></i>
+    </a>
+</p>
+
+<div id="modalContainer"></div>
+
+<table id="tableBarangMasuk" class="table table-bordered table-hover dataTable dtr-inline collapsed">
+    <thead>
+        <tr>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="NAMA BARANG: activate to sort column ascending" aria-sort="descending">NAMA BARANG</th>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="TANGGAL KELUAR: activate to sort column ascending" aria-sort="descending">TANGGAL KELUAR</th>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="JUMLAH BARANG: activate to sort column ascending" aria-sort="descending">JUMLAH BARANG</th>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="HARGA BARANG: activate to sort column ascending" aria-sort="descending">HARGA BARANG</th>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="HARGA TOTAL: activate to sort column ascending" aria-sort="descending">HARGA TOTAL</th>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="SUPPLIER: activate to sort column ascending" aria-sort="descending">SUPPLIER</th>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="NAMA BARANG: activate to sort column ascending" aria-sort="descending">ACTION</th>
+
+        </tr>
+    </thead>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NamaBarang)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TanggalMasuk)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.JumlahBarang)
+            </td>
+            <td>
+                @item.HargaBarang.ToString("C", new System.Globalization.CultureInfo("id-ID")) / @item.satuan
+            </td>
+            <td>
+                @item.HargaBarangTotal.ToString("C", new System.Globalization.CultureInfo("id-ID"))
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Suplier)
+            </td>
+
+            <td>
+                <button type="button" class="btn btn-primary editBarangKeluarButton" data-id="@item.Id">Edit</button> |
+                @*<button type="button" class="btn btn-secondary detailBarangMasukButton" data-id="@item.Id">Detail</button> |*@
+                <button type="button" class="btn btn-danger deleteKeluarMasukButton" data-id="@item.Id">Delete</button>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<script>
+    $('.editBarangKeluarButton').click(function () {
+        var id = $(this).data('id');
+        $.ajax({
+            url: '@Url.Action("EditModal", "BarangKeluar")',
+            type: 'GET',
+            data: { id: id },
+            success: function (data) {
+                $('#modalContainer').html(data);
+                $('#editBarangKeluarModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX Error: ' + status + error);
+            }
+        });
+    });
+
+    $(function () {
+        $("#tableBarangMasuk").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+        });
+    });
+
+    $(document).ready(function () {
+        $('.deleteKeluarMasukButton').on('click', function (e) {
+        var itemId = $(this).data('id');
+        var confirmation = confirm('Apakah Anda yakin ingin hapus barang dengan ID ' + itemId + '?');
+        if (confirmation) {
+            $.ajax({
+                url: '/BarangKeluar/Delete/' + itemId,
+                type: 'POST',
+                success: function (result) {
+                    // Tindakan yang dilakukan setelah data berhasil dihapus
+                    alert('Data berhasil dihapus');
+                    // Misalnya, Anda bisa menghapus baris dari tabel atau me-refresh halaman
+                    location.reload();
+                },
+                error: function (err) {
+                    // Tindakan yang dilakukan jika terjadi kesalahan
+                    alert('Terjadi kesalahan saat menghapus data');
+                }
+            });
+        }
+    });
+
+});
+</script>

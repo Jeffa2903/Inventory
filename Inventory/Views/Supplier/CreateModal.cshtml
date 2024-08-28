@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "CreateModal";
+}
+
+@model Inventory.Models.supplier
+
+<div class="modal fade" id="createSupplierModal" tabindex="-1" role="dialog" aria-labelledby="createSupplierModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createSupplierModalLabel">Tambah Data Suplier</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Create", "Supplier", FormMethod.Post, new { @class = "form-horizontal", id = "createSupplierForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Nama Suplier</label>
+                        @Html.EditorFor(model => model.namaSupplier, new { htmlAttributes = new { @class = "form-control", @placeholder = "Input Nama Supplier", @required = "required" } })
+                        @Html.ValidationMessageFor(model => model.namaSupplier, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Alamat Suplier</label>
+                        @Html.EditorFor(model => model.alamatSupplier, new { htmlAttributes = new { @class = "form-control", @placeholder = "Input Alamat Supplier", @required = "required" } })
+                        @Html.ValidationMessageFor(model => model.alamatSupplier, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Suplier</label>
+                        @Html.EditorFor(model => model.contactSuplier, new { htmlAttributes = new { @class = "form-control", @placeholder = "Input Contact Supplier", @required = "required" } })
+                        @Html.ValidationMessageFor(model => model.contactSuplier, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

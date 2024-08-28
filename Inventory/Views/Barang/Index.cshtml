@@ -1,0 +1,133 @@
+﻿@model IEnumerable<Inventory.Models.barang>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<p>
+    <a href="javascript:void(0);" title="Create" class="btn btn-success btn-lg" data-toggle="modal" data-target="#createBarangModal" id="createBarangButton">
+        Tambah Data <i class="fa fa-plus"></i>
+    </a>
+</p>
+
+<div id="modalContainer"></div>
+
+
+<table id="tableBarang" class="table table-bordered table-hover dataTable dtr-inline collapsed">
+    <thead>
+        <tr>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="NAMA BARANG: activate to sort column ascending" aria-sort="descending">NAMA BARANG</th>
+            
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="SATUAN: activate to sort column ascending" aria-sort="descending">SATUAN</th>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="SATUAN: activate to sort column ascending" aria-sort="descending">HARGA BARANG</th>
+            <th class="sorting sorting_desc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="SATUAN: activate to sort column ascending" aria-sort="descending">JENIS</th>
+            <th width="200px">ACTION</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.namaBarang)</td>
+                <td>@Html.DisplayFor(modelItem => item.satuan)</td>
+                <td> @item.hargaBarang.ToString("C", new System.Globalization.CultureInfo("id-ID")) / @item.satuan</td>
+                <td> @item.jenis</td>
+                <td>
+                    <button type="button" class="btn btn-primary editBarangButton" data-id="@item.id">Edit</button> |
+                    <button type="button" class="btn btn-secondary detailBarangButton" data-id="@item.id">Detail</button> |
+                    <button type="button" class="btn btn-danger deleteBarangButton" data-id="@item.id">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        $('#createBarangButton').click(function () {
+            $.ajax({
+                url: '@Url.Action("CreateModal", "Barang")',
+                type: 'GET',
+                success: function (data) {
+                    $('#modalContainer').html(data);
+                    $('#createBarangModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX Error: ' + status + error);
+                }
+            });
+        });
+
+        $('.deleteBarangButton').on('click', function (e) {
+            var itemId = $(this).data('id');
+            var confirmation = confirm('Apakah Anda yakin ingin hapus barang dengan ID ' + itemId + '?');
+            if (confirmation) {
+                $.ajax({
+                    url: '/Barang/Delete/' + itemId,
+                    type: 'POST',
+                    success: function (result) {
+                        // Tindakan yang dilakukan setelah data berhasil dihapus
+                        alert('Data berhasil dihapus');
+                        // Misalnya, Anda bisa menghapus baris dari tabel atau me-refresh halaman
+                        location.reload();
+                    },
+                    error: function (err) {
+                        // Tindakan yang dilakukan jika terjadi kesalahan
+                        alert('Terjadi kesalahan saat menghapus data');
+                    }
+                });
+            }
+        });
+
+    });
+
+    $('.editBarangButton').click(function () {
+            var id = $(this).data('id');
+            $.ajax({
+                url: '@Url.Action("EditModal", "Barang")',
+                type: 'GET',
+                data: { id: id },
+                success: function (data) {
+                    $('#modalContainer').html(data);
+                    $('#editBarangModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX Error: ' + status + error);
+                }
+            });
+    });
+
+    $('.detailBarangButton').click(function () {
+        var id = $(this).data('id');
+        $.ajax({
+            url: '@Url.Action("Details", "Barang")',
+            type: 'GET',
+            data: { id: id },
+            success: function (data) {
+                $('#modalContainer').html(data);
+                $('#detailBarangModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX Error: ' + status + error);
+            }
+        });
+    });
+
+    $(function () {
+        $("#tableBarang").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+        $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+        });
+    });
+
+
+</script>
